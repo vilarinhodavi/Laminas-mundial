@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Album WC 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f13;
+  --surface: #18181f;
+  --surface2: #22222c;
+  --border: #2e2e3a;
+  --accent: #c8f135;
+  --accent2: #3b82f6;
+  --danger: #f43f5e;
+  --warn: #fb923c;
+  --text: #f0f0f5;
+  --muted: #8888a0;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+
+/* LOGIN */
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;gap:2rem}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;width:100%;max-width:400px}
+.login-logo{font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);letter-spacing:2px;text-align:center;margin-bottom:2rem;opacity:0.8}
+.login-title{font-size:28px;font-weight:900;line-height:1.1;margin-bottom:0.4rem}
+.login-sub{font-size:14px;color:var(--muted);margin-bottom:2rem}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+.field label{font-size:13px;color:var(--muted);font-weight:500}
+.field input{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;color:var(--text);font-size:15px;font-family:'Figtree',sans-serif;outline:none;transition:border 0.15s}
+.field input:focus{border-color:var(--accent)}
+.btn-primary{width:100%;padding:12px;background:var(--accent);color:#0f0f13;font-size:15px;font-weight:700;border:none;border-radius:var(--radius);cursor:pointer;font-family:'Figtree',sans-serif;transition:opacity 0.15s}
+.btn-primary:hover{opacity:0.88}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.login-err{font-size:13px;color:var(--danger);text-align:center;margin-top:8px;min-height:18px}
+
+/* APP SHELL */
+#app-screen{display:none;min-height:100vh;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:1px}
+.topbar-user{font-size:14px;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.btn-sm{padding:6px 14px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-family:'Figtree',sans-serif;transition:background 0.15s}
+.btn-sm:hover{background:var(--surface2)}
+.btn-sm.accent{border-color:var(--accent);color:var(--accent)}
+.btn-sm.accent:hover{background:rgba(200,241,53,0.08)}
+
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.stat-cell{background:var(--surface);padding:12px 16px;text-align:center}
+.stat-cell .n{font-size:24px;font-weight:900;font-family:'Space Mono',monospace}
+.stat-cell .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.stat-cell.green .n{color:var(--accent)}
+.stat-cell.blue .n{color:var(--accent2)}
+.stat-cell.orange .n{color:var(--warn)}
+.stat-cell.red .n{color:var(--danger)}
+
+.nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:12px 20px;font-size:13px;font-weight:600;border:none;background:none;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;font-family:'Figtree',sans-serif;transition:color 0.15s}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.content{flex:1;padding:1.5rem;max-width:900px;margin:0 auto;width:100%}
+
+/* ALBUM */
+.country-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:8px;overflow:hidden}
+.country-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none}
+.country-head:hover{background:var(--surface2)}
+.country-info{display:flex;align-items:center;gap:10px}
+.flag{font-size:22px;line-height:1}
+.cname{font-size:14px;font-weight:600}
+.clabel{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
+.country-meta{display:flex;align-items:center;gap:10px}
+.prog-pill{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted)}
+.prog-pill.done{color:var(--accent)}
+.chevron{font-size:12px;color:var(--muted);transition:transform 0.2s}
+.chevron.open{transform:rotate(180deg)}
+
+.country-body{padding:0 14px 14px;display:none}
+.country-body.open{display:block}
+.prog-bar{height:3px;background:var(--border);border-radius:2px;margin:10px 0;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.3s}
+
+.stickers{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.stk{width:38px;height:38px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-weight:700;font-family:'Space Mono',monospace;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);background:var(--surface2);transition:all 0.12s;user-select:none}
+.stk:hover{border-color:var(--muted)}
+.stk.tengo{background:rgba(200,241,53,0.12);border-color:rgba(200,241,53,0.4);color:var(--accent)}
+.stk.repetida{background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.4);color:var(--warn)}
+
+.legend{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.leg-sq{width:14px;height:14px;border-radius:4px;border:1px solid var(--border)}
+
+/* LISTAS */
+.list-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:8px;overflow:hidden}
+.list-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.list-nums{padding:10px 16px 14px;font-size:13px;color:var(--text);line-height:2;font-family:'Space Mono',monospace;border-top:1px solid var(--border)}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:'Space Mono',monospace}
+.badge.green{background:rgba(200,241,53,0.15);color:var(--accent)}
+.badge.orange{background:rgba(251,146,60,0.15);color:var(--warn)}
+.badge.red{background:rgba(244,63,94,0.15);color:var(--danger)}
+.badge.blue{background:rgba(59,130,246,0.15);color:var(--accent2)}
+
+/* AMIGOS */
+.friend-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px}
+.friend-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.friend-avatar{width:40px;height:40px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--accent);font-family:'Space Mono',monospace}
+.friend-name-box{flex:1;margin-left:12px}
+.friend-name{font-size:15px;font-weight:700}
+.friend-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.match-cell{background:var(--surface2);border-radius:8px;padding:10px 12px}
+.match-cell .ml{font-size:11px;color:var(--muted);margin-bottom:4px}
+.match-cell .mn{font-size:18px;font-weight:900;font-family:'Space Mono',monospace}
+.match-cell.give .mn{color:var(--accent)}
+.match-cell.get .mn{color:var(--accent2)}
+.match-detail{font-size:12px;color:var(--muted);line-height:1.9;font-family:'Space Mono',monospace}
+.match-detail strong{color:var(--text);font-weight:600}
+.add-friend-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:14px}
+.add-friend-title{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--muted)}
+.add-row{display:flex;gap:8px}
+.add-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:9px 12px;color:var(--text);font-size:14px;font-family:'Figtree',sans-serif;outline:none}
+.add-row input:focus{border-color:var(--accent)}
+.btn-del{padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--danger);font-size:14px}
+.btn-del:hover{background:rgba(244,63,94,0.1)}
+
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-state .icon{font-size:40px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.filt{padding:5px 12px;font-size:12px;font-weight:600;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Figtree',sans-serif}
+.filt.active{background:var(--accent);color:#0f0f13;border-color:var(--accent)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+
+.saving{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">FIFA WORLD CUP 2026</div>
+    <h1 class="login-title">Tu álbum,<br>tu colección.</h1>
+    <p class="login-sub">Elegí un nombre de usuario para empezar o continuar.</p>
+    <div class="field">
+      <label>Nombre de usuario</label>
+      <input type="text" id="login-input" placeholder="ej: matias26" maxlength="30" autocomplete="off">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Entrar al álbum</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">WC26</div>
+      <div class="topbar-user" id="topbar-username"></div>
+      <div class="saving" id="saving-indicator"></div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-sm accent" onclick="exportTxt()">Exportar</button>
+      <button class="btn-sm" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-cell green"><div class="n" id="s-tengo">0</div><div class="l">Tengo</div></div>
+    <div class="stat-cell red"><div class="n" id="s-faltan">0</div><div class="l">Faltan</div></div>
+    <div class="stat-cell orange"><div class="n" id="s-rep">0</div><div class="l">Repetidas</div></div>
+    <div class="stat-cell blue"><div class="n" id="s-pct">0%</div><div class="l">Completado</div></div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showTab('album',this)">Álbum</button>
+    <button class="nav-btn" onclick="showTab('faltan',this)">Faltantes</button>
+    <button class="nav-btn" onclick="showTab('repetidas',this)">Repetidas</button>
+    <button class="nav-btn" onclick="showTab('amigos',this)">Amigos</button>
+  </div>
+
+  <div class="content">
+    <div id="tab-album">
+      <div class="legend">
+        <div class="leg"><div class="leg-sq" style="background:var(--surface2)"></div>Sin marcar</div>
+        <div class="leg"><div class="leg-sq" style="background:rgba(200,241,53,0.12);border-color:rgba(200,241,53,0.4)"></div>La tengo</div>
+        <div class="leg"><div class="leg-sq" style="background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.4)"></div>Repetida</div>
+      </div>
+      <div id="album-list"></div>
+    </div>
+
+    <div id="tab-faltan" style="display:none">
+      <div class="filter-row" id="faltan-filters"></div>
+      <div id="faltan-list"></div>
+    </div>
+
+    <div id="tab-repetidas" style="display:none">
+      <div id="rep-list"></div>
+    </div>
+
+    <div id="tab-amigos" style="display:none">
+      <div class="add-friend-box">
+        <div class="add-friend-title">Agregar amigo por usuario</div>
+        <div class="add-row">
+          <input type="text" id="friend-input" placeholder="Nombre de usuario..." autocomplete="off">
+          <button class="btn-primary" style="width:auto;padding:9px 18px" onclick="addFriend()">Agregar</button>
+        </div>
+        <div class="login-err" id="friend-err"></div>
+      </div>
+      <div id="friends-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://vnxfoktkoliizbqpaxtz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueGZva3Rrb2xpaXpicXBheHR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MDc1NzEsImV4cCI6MjA5NTE4MzU3MX0.Jl0e5apzYJGIRquqBUcNCKY2axnKodh8ymjE77HOpOw';
+
+const COUNTRIES = [
+  {key:"FWC_trophy",label:"FWC",flag:"🏆",name:"FIFA World Cup",total:20},
+  {key:"FWC_globe",label:"FWC",flag:"🌎",name:"Sede",total:20},
+  {key:"FWC_scroll",label:"FWC",flag:"📜",name:"Historia",total:20},
+  {key:"ALG",label:"ALG",flag:"🇩🇿",name:"Argelia",total:20},
+  {key:"ARG",label:"ARG",flag:"🇦🇷",name:"Argentina",total:20},
+  {key:"AUS",label:"AUS",flag:"🇦🇺",name:"Australia",total:20},
+  {key:"AUT",label:"AUT",flag:"🇦🇹",name:"Austria",total:20},
+  {key:"BEL",label:"BEL",flag:"🇧🇪",name:"Bélgica",total:20},
+  {key:"BIH",label:"BIH",flag:"🇧🇦",name:"Bosnia y Herz.",total:20},
+  {key:"BRA",label:"BRA",flag:"🇧🇷",name:"Brasil",total:20},
+  {key:"CAN",label:"CAN",flag:"🇨🇦",name:"Canadá",total:20},
+  {key:"CC",label:"CC",flag:"🥤",name:"Coca-Cola",total:14},
+  {key:"CIV",label:"CIV",flag:"🇨🇮",name:"Costa de Marfil",total:20},
+  {key:"COD",label:"COD",flag:"🇨🇩",name:"R.D. del Congo",total:20},
+  {key:"COL",label:"COL",flag:"🇨🇴",name:"Colombia",total:20},
+  {key:"CPV",label:"CPV",flag:"🇨🇻",name:"Cabo Verde",total:20},
+  {key:"CRO",label:"CRO",flag:"🇭🇷",name:"Croacia",total:20},
+  {key:"CUW",label:"CUW",flag:"🇨🇼",name:"Curazao",total:20},
+  {key:"CZE",label:"CZE",flag:"🇨🇿",name:"Rep. Checa",total:20},
+  {key:"ECU",label:"ECU",flag:"🇪🇨",name:"Ecuador",total:20},
+  {key:"EGY",label:"EGY",flag:"🇪🇬",name:"Egipto",total:20},
+  {key:"ENG",label:"ENG",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",name:"Inglaterra",total:20},
+  {key:"ESP",label:"ESP",flag:"🇪🇸",name:"España",total:20},
+  {key:"FRA",label:"FRA",flag:"🇫🇷",name:"Francia",total:20},
+  {key:"GER",label:"GER",flag:"🇩🇪",name:"Alemania",total:20},
+  {key:"GHA",label:"GHA",flag:"🇬🇭",name:"Ghana",total:20},
+  {key:"HAI",label:"HAI",flag:"🇭🇹",name:"Haití",total:20},
+  {key:"IRN",label:"IRN",flag:"🇮🇷",name:"Irán",total:20},
+  {key:"IRQ",label:"IRQ",flag:"🇮🇶",name:"Irak",total:20},
+  {key:"JOR",label:"JOR",flag:"🇯🇴",name:"Jordania",total:20},
+  {key:"JPN",label:"JPN",flag:"🇯🇵",name:"Japón",total:20},
+  {key:"KOR",label:"KOR",flag:"🇰🇷",name:"Corea del Sur",total:20},
+  {key:"KSA",label:"KSA",flag:"🇸🇦",name:"Arabia Saudita",total:20},
+  {key:"MAR",label:"MAR",flag:"🇲🇦",name:"Marruecos",total:20},
+  {key:"NED",label:"NED",flag:"🇳🇱",name:"Países Bajos",total:20},
+  {key:"NZL",label:"NZL",flag:"🇳🇿",name:"Nueva Zelanda",total:20},
+  {key:"PAN",label:"PAN",flag:"🇵🇦",name:"Panamá",total:20},
+  {key:"POR",label:"POR",flag:"🇵🇹",name:"Portugal",total:20},
+  {key:"QAT",label:"QAT",flag:"🇶🇦",name:"Qatar",total:20},
+  {key:"SUI",label:"SUI",flag:"🇨🇭",name:"Suiza",total:20},
+  {key:"SWE",label:"SWE",flag:"🇸🇪",name:"Suecia",total:20},
+  {key:"TUN",label:"TUN",flag:"🇹🇳",name:"Túnez",total:20},
+  {key:"TUR",label:"TUR",flag:"🇹🇷",name:"Turquía",total:20},
+  {key:"USA",label:"USA",flag:"🇺🇸",name:"Estados Unidos",total:20},
+  {key:"UZB",label:"UZB",flag:"🇺🇿",name:"Uzbekistán",total:20},
+];
+
+const api = (path, opts={}) => fetch(`${SUPA_URL}/rest/v1/${path}`, {
+  headers: {'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation', ...opts.headers},
+  ...opts
+}).then(r => r.json());
+
+let currentUser = null;
+let stickerState = {};
+let friends = [];
+let collapsed = {};
+let saveTimer = null;
+let pendingSaves = {};
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function setSaving(on) {
+  document.getElementById('saving-indicator').textContent = on ? 'guardando...' : '';
+}
+
+// ── AUTH ───────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const name = document.getElementById('login-input').value.trim().toLowerCase();
+  if (!name) return;
+  document.getElementById('login-err').textContent = '';
+  document.querySelector('.btn-primary').disabled = true;
+  try {
+    let users = await api(`users?username=eq.${encodeURIComponent(name)}&select=id,username`);
+    let user;
+    if (users.length) {
+      user = users[0];
+    } else {
+      const res = await api('users', { method: 'POST', body: JSON.stringify({ username: name }) });
+      user = res[0];
+    }
+    currentUser = user;
+    localStorage.setItem('wc26_user', JSON.stringify(user));
+    await loadUserData();
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'flex';
+    document.getElementById('topbar-username').textContent = '@' + user.username;
+    renderAll();
+  } catch(e) {
+    document.getElementById('login-err').textContent = 'Error al conectar. Revisá tu conexión.';
+  }
+  document.querySelector('.btn-primary').disabled = false;
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('wc26_user');
+  stickerState = {};
+  friends = [];
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-input').value = '';
+}
+
+document.getElementById('login-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ── DATA ───────────────────────────────────────────────────────────────────────
+async function loadUserData() {
+  // init state
+  stickerState = {};
+  COUNTRIES.forEach(c => {
+    stickerState[c.key] = {};
+    for (let i = 1; i <= c.total; i++) stickerState[c.key][i] = 0;
+  });
+
+  // load stickers
+  const rows = await api(`stickers?user_id=eq.${currentUser.id}&select=country_key,number,estado`);
+  rows.forEach(r => {
+    if (stickerState[r.country_key]) stickerState[r.country_key][r.number] = r.estado;
+  });
+
+  // load friends
+  const frows = await api(`friendships?user_id=eq.${currentUser.id}&select=friend_id,users!friend_id(id,username)`);
+  friends = frows.map(r => ({ id: r.friend_id, username: r.users.username }));
+}
+
+async function loadFriendState(friendId) {
+  const rows = await api(`stickers?user_id=eq.${friendId}&select=country_key,number,estado`);
+  const st = {};
+  COUNTRIES.forEach(c => { st[c.key] = {}; for(let i=1;i<=c.total;i++) st[c.key][i]=0; });
+  rows.forEach(r => { if(st[r.country_key]) st[r.country_key][r.number] = r.estado; });
+  return st;
+}
+
+// ── STICKER CYCLE ─────────────────────────────────────────────────────────────
+async function cycleSticker(key, num) {
+  stickerState[key][num] = (stickerState[key][num] + 1) % 3;
+  renderStats();
+  const btn = document.getElementById(`stk-${key}-${num}`);
+  if (btn) {
+    btn.className = 'stk' + (stickerState[key][num]===1?' tengo':stickerState[key][num]===2?' repetida':'');
+  }
+  scheduleSave(key, num, stickerState[key][num]);
+}
+
+function scheduleSave(key, num, val) {
+  pendingSaves[`${key}:${num}`] = { key, num, val };
+  setSaving(true);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flushSaves, 800);
+}
+
+async function flushSaves() {
+  const entries = Object.values(pendingSaves);
+  pendingSaves = {};
+  if (!entries.length) { setSaving(false); return; }
+  const upserts = entries.map(e => ({
+    user_id: currentUser.id, country_key: e.key, number: e.num, estado: e.val, updated_at: new Date().toISOString()
+  }));
+  await api('stickers', {
+    method: 'POST',
+    headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(upserts)
+  });
+  setSaving(false);
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────────
+function calcStats() {
+  let tengo=0, total=0, rep=0;
+  COUNTRIES.forEach(c => {
+    for (let i=1; i<=c.total; i++) {
+      total++;
+      const v = stickerState[c.key]?.[i] || 0;
+      if (v===1) tengo++;
+      if (v===2) { tengo++; rep++; }
+    }
+  });
+  return { tengo, total, rep, faltan: total-tengo };
+}
+
+function renderStats() {
+  const s = calcStats();
+  document.getElementById('s-tengo').textContent = s.tengo;
+  document.getElementById('s-faltan').textContent = s.faltan;
+  document.getElementById('s-rep').textContent = s.rep;
+  document.getElementById('s-pct').textContent = Math.round(s.tengo/s.total*100) + '%';
+}
+
+function renderAlbum() {
+  const el = document.getElementById('album-list');
+  el.innerHTML = '';
+  COUNTRIES.forEach(c => {
+    const owned = Object.values(stickerState[c.key]||{}).filter(v=>v>0).length;
+    const pct = Math.round(owned/c.total*100);
+    const isOpen = !collapsed[c.key];
+    const div = document.createElement('div');
+    div.className = 'country-block';
+    div.innerHTML = `
+      <div class="country-head" onclick="toggleBlock('${c.key}')">
+        <div class="country-info">
+          <span class="flag">${c.flag}</span>
+          <div><div class="cname">${c.name}</div><div class="clabel">${c.label}</div></div>
+        </div>
+        <div class="country-meta">
+          <span class="prog-pill${owned===c.total?' done':''}">${owned}/${c.total}</span>
+          <span class="chevron${isOpen?' open'}">▾</span>
+        </div>
+      </div>
+      <div class="country-body${isOpen?' open'}" id="body-${c.key}">
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+        <div class="stickers">${
+          Array.from({length:c.total},(_,i)=>{
+            const n=i+1, v=stickerState[c.key]?.[n]||0;
+            return `<button class="stk${v===1?' tengo':v===2?' repetida':''}" id="stk-${c.key}-${n}" onclick="cycleSticker('${c.key}',${n})" title="${c.label} #${n}">${n}</button>`;
+          }).join('')
+        }</div>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+function toggleBlock(key) {
+  collapsed[key] = !collapsed[key];
+  const body = document.getElementById('body-' + key);
+  const head = body.previousElementSibling;
+  body.classList.toggle('open');
+  head.querySelector('.chevron').classList.toggle('open');
+}
+
+function renderFaltan() {
+  const filterEl = document.getElementById('faltan-filters');
+  const listEl = document.getElementById('faltan-list');
+  const active = document.querySelector('.filt.active')?.dataset.key || 'all';
+
+  const withMissing = COUNTRIES.filter(c => Object.values(stickerState[c.key]||{}).some(v=>v===0));
+  filterEl.innerHTML = `<button class="filt${active==='all'?' active':''}" data-key="all" onclick="setFiltF('all',this)">Todos</button>` +
+    withMissing.map(c=>`<button class="filt${active===c.key?' active':''}" data-key="${c.key}" onclick="setFiltF('${c.key}',this)">${c.flag} ${c.label}</button>`).join('');
+
+  const show = active==='all' ? COUNTRIES : COUNTRIES.filter(c=>c.key===active);
+  let html = '';
+  show.forEach(c => {
+    const m = [];
+    for(let i=1;i<=c.total;i++) if((stickerState[c.key]?.[i]||0)===0) m.push(i);
+    if (!m.length) return;
+    html += `<div class="list-block">
+      <div class="list-head">
+        <div class="country-info"><span class="flag">${c.flag}</span><div><div class="cname">${c.name}</div><div class="clabel">${c.label}</div></div></div>
+        <span class="badge orange">${m.length} faltan</span>
+      </div>
+      <div class="list-nums">${m.join('  ·  ')}</div>
+    </div>`;
+  });
+  listEl.innerHTML = html || '<div class="empty-state"><div class="icon">🎉</div><p>¡Álbum completo!</p></div>';
+}
+
+function setFiltF(key, btn) {
+  document.querySelectorAll('.filt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFaltan();
+}
+
+function renderRepetidas() {
+  const el = document.getElementById('rep-list');
+  let html = '';
+  COUNTRIES.forEach(c => {
+    const r = [];
+    for(let i=1;i<=c.total;i++) if((stickerState[c.key]?.[i]||0)===2) r.push(i);
+    if (!r.length) return;
+    html += `<div class="list-block">
+      <div class="list-head">
+        <div class="country-info"><span class="flag">${c.flag}</span><div><div class="cname">${c.name}</div><div class="clabel">${c.label}</div></div></div>
+        <span class="badge green">${r.length} extras</span>
+      </div>
+      <div class="list-nums">${r.join('  ·  ')}</div>
+    </div>`;
+  });
+  el.innerHTML = html || '<div class="empty-state"><div class="icon">📦</div><p>No tenés repetidas todavía</p></div>';
+}
+
+async function renderFriends() {
+  const el = document.getElementById('friends-list');
+  if (!friends.length) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">👥</div><p>Agregá amigos para ver qué pueden intercambiar</p></div>';
+    return;
+  }
+  el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Cargando...</div>';
+
+  const myReps={}, myFaltan={};
+  COUNTRIES.forEach(c => {
+    for(let i=1;i<=c.total;i++){
+      const v = stickerState[c.key]?.[i]||0;
+      const id = `${c.key}:${i}`;
+      if(v===2) myReps[id]={c,n:i};
+      if(v===0) myFaltan[id]={c,n:i};
+    }
+  });
+
+  let html = '';
+  for (const f of friends) {
+    const fst = await loadFriendState(f.id);
+    const fReps={}, fFaltan={};
+    COUNTRIES.forEach(c => {
+      for(let i=1;i<=c.total;i++){
+        const v=fst[c.key]?.[i]||0, id=`${c.key}:${i}`;
+        if(v===2) fReps[id]={c,n:i};
+        if(v===0) fFaltan[id]={c,n:i};
+      }
+    });
+    const puedoDar = Object.keys(myReps).filter(id=>fFaltan[id]);
+    const puedoRecibir = Object.keys(fReps).filter(id=>myFaltan[id]);
+    const initials = f.username.slice(0,2).toUpperCase();
+    const owned = Object.values(fst).reduce((a,sec)=>a+Object.values(sec).filter(v=>v>0).length,0);
+
+    html += `<div class="friend-card">
+      <div class="friend-top">
+        <div class="friend-avatar">${initials}</div>
+        <div class="friend-name-box">
+          <div class="friend-name">@${f.username}</div>
+          <div class="friend-sub">${owned} figuritas en su álbum</div>
+        </div>
+        <button class="btn-del" onclick="removeFriend('${f.id}')" title="Eliminar amigo">✕</button>
+      </div>
+      <div class="match-grid">
+        <div class="match-cell give"><div class="ml">Yo le puedo dar</div><div class="mn">${puedoDar.length}</div></div>
+        <div class="match-cell get"><div class="ml">Me puede dar</div><div class="mn">${puedoRecibir.length}</div></div>
+      </div>
+      ${puedoDar.length ? `<div class="match-detail"><strong>Le doy:</strong> ${puedoDar.slice(0,30).map(id=>`${myReps[id].c.flag}${myReps[id].n}`).join(' ')}${puedoDar.length>30?` +${puedoDar.length-30} más`:''}</div>` : ''}
+      ${puedoRecibir.length ? `<div class="match-detail" style="margin-top:6px"><strong>Me da:</strong> ${puedoRecibir.slice(0,30).map(id=>`${fReps[id].c.flag}${fReps[id].n}`).join(' ')}${puedoRecibir.length>30?` +${puedoRecibir.length-30} más`:''}</div>` : ''}
+    </div>`;
+  }
+  el.innerHTML = html;
+}
+
+async function addFriend() {
+  const inp = document.getElementById('friend-input');
+  const name = inp.value.trim().toLowerCase();
+  const errEl = document.getElementById('friend-err');
+  errEl.textContent = '';
+  if (!name) return;
+  if (name === currentUser.username) { errEl.textContent = 'Ese sos vos 😄'; return; }
+  if (friends.find(f=>f.username===name)) { errEl.textContent = 'Ya está en tu lista'; return; }
+
+  const users = await api(`users?username=eq.${encodeURIComponent(name)}&select=id,username`);
+  if (!users.length) { errEl.textContent = 'Usuario no encontrado'; return; }
+  const friend = users[0];
+  await api('friendships', { method:'POST', body: JSON.stringify({ user_id: currentUser.id, friend_id: friend.id }) });
+  friends.push(friend);
+  inp.value = '';
+  toast('Amigo agregado');
+  renderFriends();
+}
+
+async function removeFriend(friendId) {
+  await api(`friendships?user_id=eq.${currentUser.id}&friend_id=eq.${friendId}`, { method:'DELETE' });
+  friends = friends.filter(f=>f.id!==friendId);
+  renderFriends();
+}
+
+function exportTxt() {
+  const s = calcStats();
+  let txt = `ÁLBUM FIFA WORLD CUP 2026 — @${currentUser.username}\n`;
+  txt += `Estado: ${s.tengo}/${s.tengo+s.faltan} (${Math.round(s.tengo/(s.tengo+s.faltan)*100)}% completado)\n\n`;
+  txt += `FALTANTES (${s.faltan}):\n`;
+  COUNTRIES.forEach(c => {
+    const m = [];
+    for(let i=1;i<=c.total;i++) if((stickerState[c.key]?.[i]||0)===0) m.push(i);
+    if (m.length) txt += `* ${c.flag} ${c.label} – ${c.name}: ${m.join(', ')}\n`;
+  });
+  txt += `\nREPETIDAS (${s.rep}):\n`;
+  COUNTRIES.forEach(c => {
+    const r = [];
+    for(let i=1;i<=c.total;i++) if((stickerState[c.key]?.[i]||0)===2) r.push(i);
+    if (r.length) txt += `* ${c.flag} ${c.label} – ${c.name}: ${r.join(', ')}\n`;
+  });
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `figuritas_${currentUser.username}.txt`;
+  a.click();
+  toast('Exportado');
+}
+
+function showTab(name, btn) {
+  ['album','faltan','repetidas','amigos'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(name==='faltan') renderFaltan();
+  if(name==='repetidas') renderRepetidas();
+  if(name==='amigos') renderFriends();
+}
+
+function renderAll() {
+  renderStats();
+  renderAlbum();
+}
+
+// Auto-login si hay sesión guardada
+(async () => {
+  const saved = localStorage.getItem('wc26_user');
+  if (saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      await loadUserData();
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'flex';
+      document.getElementById('topbar-username').textContent = '@' + currentUser.username;
+      renderAll();
+    } catch(e) { localStorage.removeItem('wc26_user'); }
+  }
+})();
+</script>
+</body>
+</html>
